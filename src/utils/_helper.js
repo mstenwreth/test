@@ -9,7 +9,6 @@ const getUniqueWords = (textBlob) => {
 const getMostCommonWord = (words) => {
     const allWordsArray = getAllWordsAsArray(words)
     const uniqueWords = getUniqueWords(words)
-    console.log('uniqueWords1', uniqueWords)
     
     const collection = new Map()
 
@@ -36,6 +35,7 @@ const parseLine = (line) => {
         .trim()
         .replace(/[^\x20-\x7E]/g, ' ') // remove ascii characters
         .replace(/\W|_/g, ' ') // remove special characters
+        .replace(/\d/g, ' ')
         .replace(/  +/g, ' ') // replace multiple spaces
 }
 
