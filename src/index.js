@@ -1,12 +1,13 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
 const port = process.env.PORT || 3000
 const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
-const fs = require('fs')
 const stream = require('stream')
 const readline = require('readline')
 
+app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(fileUpload())
@@ -18,8 +19,7 @@ app.post('/upload', async (req, res) => {
     const { files } = req
 
     if(!files) return res.status(404)
-
-    const textFile = files.textFile.data
+    const textFile = files.example.data
     if (!textFile instanceof Buffer) {
         console.log('Generic file error', textFile)
         res.send(500).json({ message: 'Internal error'})
@@ -44,10 +44,10 @@ app.post('/upload', async (req, res) => {
         rl.on('close', () => {
             const mostCommonWord = getMostCommonWord(text)
             text = replaceMostCommonWord(text, mostCommonWord)
-            return res.status(200).json({ mostCommonWord, 'text': files.textFile.size === 0 ? 'Missing content in file' : text })
+            return res.status(200).json({ mostCommonWord, 'text': files.example.size === 0 ? 'Missing content in file' : text })
         }) 
     } catch (error) {
-        console.log(error.message)
+        console.log('error.message', error.message)
         res.send(500).json({ message: 'Internal error' })
     }
 })

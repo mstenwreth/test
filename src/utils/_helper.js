@@ -20,7 +20,11 @@ const getMostCommonWord = (words) => {
     const result = new Map([...collection].sort((a, b) => b[1] - a[1]))
     const [mostCommon] = result.keys()
     
-    return mostCommon
+    // if the same 1, 2 on the list
+    const asArray = [...result.values()]
+    const same = asArray.length > 2 && asArray[0] === asArray[1]
+    
+    return same ? `Split winner! ${Array.from(result)[0]} times & ${Array.from(result)[1]} times` : mostCommon
 }
 
 const getAllWordsAsArray = (textBlob) => {
