@@ -1,57 +1,25 @@
 const express = require('express')
-const app = express()
+const routes = require('./routes')
+const { v4: uuidv4 } = require('uuid')
 const cors = require('cors')
-const port = process.env.PORT || 3000
 const bodyParser = require('body-parser')
-const fileUpload = require('express-fileupload')
-const stream = require('stream')
-const readline = require('readline')
 
-app.use(cors())
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(fileUpload())
-app.use('/client', express.static('public'))
+function createApp(context) {
+    const app = express()
 
-const { getMostCommonWord, parseLine, replaceMostCommonWord } = require('./utils/_helper')
+    context.config = context.config || require('../config')
+    context.now = context.now ?? (() => { return new Date() })
+    context.reqId = context.reqId || uuidv4() // should be set by nginx/headers but not in this case
 
-app.post('/upload', async (req, res) => {
-    const { files } = req
+    app.use(cors())
+    app.use(bodyParser.json())
+    app.use(bodyParser.urlencoded({ extended: true }))
+    const fileUpload = require('express-fileupload')
+    app.use(fileUpload())
+    app.use('/client', express.static('public'))
+    app.use(routes(context))
 
-    if(!files) return res.status(404)
-    const textFile = files.example.data
-    if (!textFile instanceof Buffer) {
-        console.log('Generic file error', textFile)
-        res.send(500).json({ message: 'Internal error'})
-    }
+    return app
+}
 
-    try {
-        const bufferStream = new stream.PassThrough()
-        bufferStream.end(textFile)
-    
-        let rl = readline.createInterface({
-            input: bufferStream
-        })
-    
-        let text = ''
-        rl.on('line', (line) => {
-            line = parseLine(line)
-            if (line.length > 0) {
-                text += line.trim().toLowerCase() + ' '
-            }
-        })
-    
-        rl.on('close', () => {
-            const mostCommonWord = getMostCommonWord(text)
-            text = replaceMostCommonWord(text, mostCommonWord)
-            return res.status(200).json({ mostCommonWord, 'text': files.example.size === 0 ? 'Missing content in file' : text })
-        }) 
-    } catch (error) {
-        console.log('error.message', error.message)
-        res.send(500).json({ message: 'Internal error' })
-    }
-})
-
-app.listen(port, () => {
-    console.log(`application is listening to: ${port}`)
-})
+module.exports = createApp
