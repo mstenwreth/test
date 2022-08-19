@@ -1,10 +1,11 @@
 const config = require('./config')
 
-const server = require('./src')({}) // ({ inject logger and db? })
+const loggers = require('./src/logging/loggers')
+const server = require('./src')({ loggers }) // ({ inject logger and db? })
 
 async function main (app, config) {
     app.listen(config.port, () => {
-        console.log(`Running in environment: ${config.env}`)
+        console.log(`Running service [${config.name.toUpperCase()}] in environment: [${config.env}]`)
         console.log()
         console.log(`${config.name} Listening to http://localhost:${config.port}`)
     })

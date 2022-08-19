@@ -3,6 +3,7 @@ const routes = require('./routes')
 const { v4: uuidv4 } = require('uuid')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const fileUpload = require('express-fileupload')
 
 function createApp(context) {
     const app = express()
@@ -14,9 +15,7 @@ function createApp(context) {
     app.use(cors())
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: true }))
-    const fileUpload = require('express-fileupload')
     app.use(fileUpload())
-    app.use('/client', express.static('public'))
     app.use(routes(context))
 
     return app

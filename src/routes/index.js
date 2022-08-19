@@ -1,5 +1,6 @@
 const express = require('express')
 const logLevel = require('../api/logLevel')
+const health = require('../api/health')
 const apiV1 = require('./v1')
 
 module.exports = (context) => {
