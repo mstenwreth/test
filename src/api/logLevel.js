@@ -12,6 +12,7 @@ module.exports = (context) => {
       next(InternalError({ message, reqId, error }))
     }
   }
+  
   async function setLogLevel (req, res, next) {
     let newLogLevel
     const reqId = context.reqId
