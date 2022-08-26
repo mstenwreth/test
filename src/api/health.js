@@ -7,7 +7,7 @@ module.exports = (context) => {
         //  throw error
         // })
   
-        await context.loggers.info(context.reqId, `${context.config.name.toUpperCase()}`, `${req.url}`)
+        await context.loggers.info(req.rid, `${context.config.name.toUpperCase()}`, `${req.url}`)
         res.status(200).json({ status: 'healthy' })
       } catch (error) {
         await context.loggers.error(res.locals.reqId, `${context.config.name.toUpperCase() + '_ERROR'}`, `Error occurred for ${req.url}`, error)

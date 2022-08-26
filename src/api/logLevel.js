@@ -2,7 +2,7 @@ const { InternalError } = require('../errors')
 
 module.exports = (context) => {
   async function getLogLevel (req, res, next) {
-    const reqId = context.reqId
+    const reqId = req.rid
     try {
       const logLevel = context.loggers.getLogLevel().toLowerCase()
       await context.loggers.info(reqId, 'SERVICE_XXX', `Retrieved log level as ${logLevel}`)
@@ -15,7 +15,7 @@ module.exports = (context) => {
   
   async function setLogLevel (req, res, next) {
     let newLogLevel
-    const reqId = context.reqId
+    const reqId = req.rid
     try {
       newLogLevel = req.body.logLevel || req.body.loglevel
 
